@@ -98,6 +98,7 @@ def depthFirstSearch(problem: SearchProblem) -> List[Directions]:
     pila = util.Stack()
     visitados = set()
 
+    # Guardamos tuplas de (estado, camino_de_acciones)
     pila.push((problem.getStartState(), []))
     encontrado = False
 
@@ -130,7 +131,6 @@ def breadthFirstSearch(problem: SearchProblem) -> List[Directions]:
     cola = util.Queue()
     visitados = set()
     
-    # Guardamos tuplas de (estado, camino_de_acciones)
     cola.push((problem.getStartState(), []))
     encontrado = False 
     
@@ -156,8 +156,31 @@ def breadthFirstSearch(problem: SearchProblem) -> List[Directions]:
 
 def uniformCostSearch(problem: SearchProblem) -> List[Directions]:
     """Search the node of least total cost first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    # (nodo, camino, costo_total)
+    prioridad = lambda elem: elem[2]
+    cola = util.PriorityQueueWithFunction(prioridad)
+    visitados = set()
+
+    cola.push((problem.getStartState(), [], 0))
+    encontrado = False 
+    
+    camino_final = []
+
+    while not cola.isEmpty() and not encontrado: 
+        node, direcciones, costo_acum = cola.pop()
+
+        if problem.isGoalState(node):
+            encontrado = True
+            camino_final = direcciones
+            
+        elif node not in visitados:
+            visitados.add(node)
+
+            for vecino, accion, costo in problem.getSuccessors(node):
+                if vecino not in visitados:
+                    cola.push((vecino, direcciones + [accion],costo_acum + costo))
+            
+    return camino_final
 
 def nullHeuristic(state, problem=None) -> float:
     """
