@@ -123,12 +123,12 @@ class AgentState:
     """
 
     def __init__( self, startConfiguration, isPacman ):
-        self.start = startConfiguration
-        self.configuration = startConfiguration
-        self.isPacman = isPacman
-        self.scaredTimer = 0
-        self.numCarrying = 0
-        self.numReturned = 0
+        self.start = startConfiguration                 # Posición inicial del agente (x,y) + direccion (N,S,E,W,Stop)
+        self.configuration = startConfiguration         # Posición actual del agente (x,y) + direccion (N,S,E,W,Stop)
+        self.isPacman = isPacman                        # Booleano que indica si el agente es Pacman
+        self.scaredTimer = 0                            # Cuanto tiempo está asustado
+        self.numCarrying = 0                            # Número de puntos de comida que lleva
+        self.numReturned = 0                            # Número de puntos de comida devueltos
 
     def __str__( self ):
         if self.isPacman:

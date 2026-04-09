@@ -33,7 +33,7 @@ class SearchProblem:
         """
         Returns the start state for the search problem.
         """
-        util.raiseNotDefined()
+        return self.startState
 
     def isGoalState(self, state):
         """
@@ -65,7 +65,6 @@ class SearchProblem:
 
 
 
-
 def tinyMazeSearch(problem: SearchProblem) -> List[Directions]:
     """
     Returns a sequence of moves that solves tinyMaze.  For any other maze, the
@@ -90,12 +89,70 @@ def depthFirstSearch(problem: SearchProblem) -> List[Directions]:
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+
+    print("Start:", problem.getStartState())
+    print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
+    print("Start's successors:", problem.getSuccessors(problem.getStartState()))
+    
+    
+    pila = util.Stack()
+    visitados = set()
+
+    pila.push((problem.getStartState(), []))
+    encontrado = False
+
+    camino_final = []
+
+    while not pila.isEmpty() and not encontrado:
+        nodo, direcciones = pila.pop()
+
+        if problem.isGoalState(nodo):
+            encontrado = True 
+            camino_final = direcciones
+
+        elif nodo not in visitados:
+            visitados.add(nodo)
+
+            for vecino, dir, costo in problem.getSuccessors(nodo):
+                if vecino not in visitados:
+                    pila.push((vecino, direcciones + [dir]))
+
+    return camino_final
+
+            
+            
+
+
 
 def breadthFirstSearch(problem: SearchProblem) -> List[Directions]:
     """Search the shallowest nodes in the search tree first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    
+    cola = util.Queue()
+    visitados = set()
+    
+    # Guardamos tuplas de (estado, camino_de_acciones)
+    cola.push((problem.getStartState(), []))
+    encontrado = False 
+    
+    camino_final = []
+
+    while not cola.isEmpty() and not encontrado: 
+        node, direcciones = cola.pop()
+
+        if problem.isGoalState(node):
+            encontrado = True
+            camino_final = direcciones
+
+        elif node not in visitados:
+            visitados.add(node)
+
+            for vecino, accion, costo in problem.getSuccessors(node):
+                if vecino not in visitados:
+                    cola.push((vecino, direcciones + [accion]))
+            
+    return camino_final
+
+
 
 def uniformCostSearch(problem: SearchProblem) -> List[Directions]:
     """Search the node of least total cost first."""
