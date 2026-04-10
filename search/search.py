@@ -120,10 +120,6 @@ def depthFirstSearch(problem: SearchProblem) -> List[Directions]:
 
     return camino_final
 
-            
-            
-
-
 
 def breadthFirstSearch(problem: SearchProblem) -> List[Directions]:
     """Search the shallowest nodes in the search tree first."""
@@ -156,31 +152,32 @@ def breadthFirstSearch(problem: SearchProblem) -> List[Directions]:
 
 def uniformCostSearch(problem: SearchProblem) -> List[Directions]:
     """Search the node of least total cost first."""
-    # (nodo, camino, costo_total)
-    prioridad = lambda elem: elem[2]
-    cola = util.PriorityQueueWithFunction(prioridad)
-    visitados = set()
+    priority = lambda elem: elem[2] # node = (state, dir, path_cost)
 
-    cola.push((problem.getStartState(), [], 0))
-    encontrado = False 
-    
-    camino_final = []
+    frontier = util.PriorityQueueWithFunction(priority)
+    reached = {}
+    g_initial_state_cost = 0
+    goal_path = []
 
-    while not cola.isEmpty() and not encontrado: 
-        node, direcciones, costo_acum = cola.pop()
+    frontier.push((problem.getStartState(), [], g_initial_state_cost))
 
-        if problem.isGoalState(node):
-            encontrado = True
-            camino_final = direcciones
-            
-        elif node not in visitados:
-            visitados.add(node)
+    goal = False 
+    while not frontier.isEmpty() and not goal: 
+        state, path, path_cost = frontier.pop()
 
-            for vecino, accion, costo in problem.getSuccessors(node):
-                if vecino not in visitados:
-                    cola.push((vecino, direcciones + [accion],costo_acum + costo))
-            
-    return camino_final
+        if problem.isGoalState(state):
+            goal = True
+            goal_path = path
+
+        else:
+            for child_state, dir, child_cost in problem.getSuccessors(state):
+                g_child_cost = path_cost + child_cost
+
+                if ((child_state not in reached) or (reached[child_state] > g_child_cost)):
+                    reached[child_state] = g_child_cost 
+                    frontier.push((child_state, path + [dir], g_child_cost))
+
+    return goal_path
 
 def nullHeuristic(state, problem=None) -> float:
     """
@@ -191,31 +188,33 @@ def nullHeuristic(state, problem=None) -> float:
 
 def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic) -> List[Directions]:
     """Search the node that has the lowest combined cost and heuristic first."""
-    prioridad = lambda elem: elem[2] + heuristic(elem[0])
-    
-    cola = util.PriorityQueueWithFunction(prioridad)
-    visitados = set()
+    priority = lambda elem: elem[2] + heuristic(elem[0], problem)
 
-    cola.push((problem.getStartState(), [], 0))
-    encontrado = False 
-    
-    camino_final = []
+    frontier = util.PriorityQueueWithFunction(priority)
+    reached = {}
+    g_initial_state_cost = 0
+    goal_path = []
 
-    while not cola.isEmpty() and not encontrado: 
-        node, direcciones, costo_acum = cola.pop()
+    frontier.push((problem.getStartState(), [], g_initial_state_cost))
 
-        if problem.isGoalState(node):
-            encontrado = True
-            camino_final = direcciones
-            
-        elif node not in visitados:
-            visitados.add(node)
+    goal = False 
+    while not frontier.isEmpty() and not goal: 
+        state, path, path_cost = frontier.pop()
 
-            for vecino, accion, costo in problem.getSuccessors(node):
-                if vecino not in visitados:
-                    cola.push((vecino, direcciones + [accion],costo_acum + costo))
-            
-    return camino_final
+        if problem.isGoalState(state):
+            goal = True
+            goal_path = path
+
+        else:
+            for child_state, dir, child_cost in problem.getSuccessors(state):
+                g_child_cost = path_cost + child_cost
+                f_child_cost = g_child_cost + heuristic(child_state, problem)
+
+                if ((child_state not in reached) or (reached[child_state] > f_child_cost)):
+                    reached[child_state] = f_child_cost
+                    frontier.push((child_state, path + [dir], g_child_cost))
+
+    return goal_path
 
 # Abbreviations
 bfs = breadthFirstSearch
