@@ -186,6 +186,7 @@ def nullHeuristic(state, problem=None) -> float:
     """
     return 0
 
+# - TODO: cambiar reached[child] = f_cost por g_cost (fijarse si es lo mismo)
 def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic) -> List[Directions]:
     """Search the node that has the lowest combined cost and heuristic first."""
     priority = lambda elem: elem[2] + heuristic(elem[0], problem)
