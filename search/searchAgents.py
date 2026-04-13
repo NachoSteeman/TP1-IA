@@ -298,12 +298,12 @@ class CornersProblem(search.SearchProblem):
 
         Un estado estara dado por una tupla con dos elementos:
         - El primero sera la posicion del pacman
-        - El segund sera una 4-Tupla cornerFood donde
-            cornerFood[i] = 0 sii self.corners[i] fue visitada, 0 en 
+        - El segund sera una 4-Tupla cornersFood donde
+            cornersFood[i] = 0 sii self.corners[i] fue visitada, 0 en 
             caso contrario. Con i en {0, 1, 2, 3}
         """
-        cornerFood = (1, 1, 1, 1)
-        return (self.startingPosition, cornerFood)
+        cornersFood = (1, 1, 1, 1)
+        return (self.startingPosition, cornersFood)
 
     def isGoalState(self, state: Any):
         """
@@ -341,12 +341,12 @@ class CornersProblem(search.SearchProblem):
             hitsWall = self.walls[nextx][nexty]
 
             if not hitsWall: 
-                cornerFood = list(state[1]).copy()
+                cornersFood = list(state[1]).copy()
                 for i in range(4):
                     if ((nextx, nexty) == self.corners[i]):
-                        cornerFood[i] = 0
+                        cornersFood[i] = 0
 
-                nextState = ((nextx, nexty), tuple(cornerFood))
+                nextState = ((nextx, nexty), tuple(cornersFood))
                 successors.append((nextState, action, actionCost))
 
 
@@ -385,9 +385,42 @@ def cornersHeuristic(state: Any, problem: CornersProblem):
     corners = problem.corners # These are the corner coordinates
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
 
-    "*** YOUR CODE HERE ***"
-    return 0 # Default to trivial solution
+    x, y = state[0]
+    cornersFood = state[1]
+    cDistance = [999999, 999999, 999999, 999999]
+    # xFoodDistance = walls.width-2
+    # yFoodDistance = walls.height-2
 
+    count = 0
+    for i in range(4):
+        count = count + cornersFood[i]
+
+    if count == 0: return 0
+
+    for i in range(4):
+         if cornersFood[i] == 1:
+             cDistance[i] = abs(x - corners[i][0]) + abs(y - corners[i][1])
+
+    nearestFood = min(cDistance)
+
+    distance = []
+    for i in range(4):
+        if cornersFood[i] == 1:
+            for j in range(i, 4):
+                if cornersFood[j] == 1:
+                    distance.append(util.manhattanDistance(corners[i], corners[j]))
+
+    print(distance)
+        
+    maxDistance = max(distance)
+    minDistance = min(distance)
+
+    if count == 4:
+        return maxDistance + nearestFood + minDistance
+    elif count == 1:
+        return nearestFood
+    else:
+        return maxDistance + nearestFood
 
 
 class AStarCornersAgent(SearchAgent):
