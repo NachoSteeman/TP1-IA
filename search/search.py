@@ -186,7 +186,6 @@ def nullHeuristic(state, problem=None) -> float:
     """
     return 0
 
-# - TODO: cambiar reached[child] = f_cost por g_cost (fijarse si es lo mismo)
 def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic) -> List[Directions]:
     """Search the node that has the lowest combined cost and heuristic first."""
     priority = lambda elem: elem[2] + heuristic(elem[0], problem)
@@ -209,10 +208,9 @@ def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic) -> List[Directi
         else:
             for child_state, dir, child_cost in problem.getSuccessors(state):
                 g_child_cost = path_cost + child_cost
-                f_child_cost = g_child_cost + heuristic(child_state, problem)
 
-                if ((child_state not in reached) or (reached[child_state] > f_child_cost)):
-                    reached[child_state] = f_child_cost
+                if ((child_state not in reached) or (reached[child_state] > g_child_cost)):
+                    reached[child_state] = g_child_cost
                     frontier.push((child_state, path + [dir], g_child_cost))
 
     return goal_path
