@@ -90,9 +90,9 @@ def depthFirstSearch(problem: SearchProblem) -> List[Directions]:
     """
     "*** YOUR CODE HERE ***"
 
-    print("Start:", problem.getStartState())
-    print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
-    print("Start's successors:", problem.getSuccessors(problem.getStartState()))
+#    print("Start:", problem.getStartState())
+#    print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
+#    print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     
     
     pila = util.Stack()
