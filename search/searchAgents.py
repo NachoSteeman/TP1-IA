@@ -286,7 +286,6 @@ class CornersProblem(search.SearchProblem):
         top, right = self.walls.height-2, self.walls.width-2
         self.corners = ((1,1), (1,top), (right, 1), (right, top))
         for corner in self.corners:
-            print(f"corner: {corner}") # DELETE (PRINT ADDED)
             if not startingGameState.hasFood(*corner):
                 print('Warning: no food in corner ' + str(corner))
         self._expanded = 0 # DO NOT CHANGE; Number of search nodes expanded
@@ -310,8 +309,6 @@ class CornersProblem(search.SearchProblem):
         Returns whether this search state is a goal state of the problem.
         """
         c1, c2, c3, c4 = state[1]
-        print(f"Gane: {not (c1 or c2 or c3 or c4)}") # DELETE (PRINT ADDED)
-        if (not (c1 or c2 or c3 or c4)): print(f"pos {state[0]}") # DELETE (PRINT ADDED)
         return not (c1 or c2 or c3 or c4)
 
     def getSuccessors(self, state: Any):
@@ -351,7 +348,6 @@ class CornersProblem(search.SearchProblem):
 
 
         self._expanded += 1 # DO NOT CHANGE
-        print(f"Expandido: {state} - Sucesores: {successors}") # DELETE (PRINT ADDED)
         return successors
 
     def getCostOfActions(self, actions):
@@ -383,41 +379,33 @@ def cornersHeuristic(state: Any, problem: CornersProblem):
     admissible.
     """
     corners = problem.corners # These are the corner coordinates
-    walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
 
     x, y = state[0]
     cornersFood = state[1]
-    cDistance = [999999, 999999, 999999, 999999]
-    # xFoodDistance = walls.width-2
-    # yFoodDistance = walls.height-2
+    cDistance = []
 
-    count = 0
+    foodCount = 0
     for i in range(4):
-        count = count + cornersFood[i]
+        if cornersFood[i] == 1:
+            foodCount = foodCount + cornersFood[i]
+            cDistance.append(abs(x - corners[i][0]) + abs(y - corners[i][1]))
 
-    if count == 0: return 0
+    if foodCount == 0: return 0
 
-    for i in range(4):
-         if cornersFood[i] == 1:
-             cDistance[i] = abs(x - corners[i][0]) + abs(y - corners[i][1])
-
-    nearestFood = min(cDistance)
-
-    distance = []
+    foodDistances = []
     for i in range(4):
         if cornersFood[i] == 1:
             for j in range(i, 4):
                 if cornersFood[j] == 1:
-                    distance.append(util.manhattanDistance(corners[i], corners[j]))
+                    foodDistances.append(util.manhattanDistance(corners[i], corners[j]))
 
-    print(distance)
-        
-    maxDistance = max(distance)
-    minDistance = min(distance)
+    nearestFood = min(cDistance)
+    maxDistance = max(foodDistances)
+    minDistance = min(foodDistances)
 
-    if count == 4:
+    if foodCount == 4:
         return maxDistance + nearestFood + minDistance
-    elif count == 1:
+    elif foodCount == 1:
         return nearestFood
     else:
         return maxDistance + nearestFood
